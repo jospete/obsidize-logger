@@ -11,7 +11,7 @@ function git(cmd: string): Buffer | number {
 	const fullCmd = 'git ' + cmd;
 	console.log('> ' + fullCmd);
 	return smokeTest ? 0 : execSync(fullCmd, { stdio: 'inherit' });
-};
+}
 
 async function main() {
 	const versionTag = version;
@@ -27,7 +27,7 @@ async function main() {
 
 	git('add --all');
 	git(`commit -m v${versionTag}`);
-	git(`tag ${versionTag}`);
+	git(`tag release/${versionTag}`);
 	git(`push -u origin --tags ${currentBranchName}`);
 }
 
