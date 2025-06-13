@@ -43,7 +43,7 @@ export interface LogEventSerializerConfig {
 	/**
 	 * Custom format for the serialized output.
 	 * When this is set, all `include***` flags will be ignored.
-	 * @default '{timestamp} [{level}] [{tag}] {message}{params}'
+	 * @default '\{timestamp\} [\{level\}] [\{tag\}] \{message\}\{params\}'
 	 */
 	format?: string;
 	/**
