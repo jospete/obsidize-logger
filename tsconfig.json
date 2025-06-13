@@ -5,17 +5,20 @@
 		"stripInternal": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"noUnusedLocals": true,
+		"importHelpers": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"importHelpers": true,
-		"module": "ES2022",
+		"strictPropertyInitialization": false,
+		"forceConsistentCasingInFileNames": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"module": "ES2015",
 		"moduleResolution": "node",
 		"outDir": "./dist",
 		"rootDir": "src",
 		"target": "ES6",
 		"lib": ["ES6", "ES2017", "DOM"]
 	},
-	"include": ["src"],
-	"exclude": ["node_modules", "tests", "dist"]
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules/", "tests/", "scripts/", "docs/", "src/test/", "src/**/*.test.ts", "dist/"]
 }

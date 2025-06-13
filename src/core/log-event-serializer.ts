@@ -96,9 +96,9 @@ export class LogEventSerializer implements LogEventSerializerLike {
 		}
 
 		const targetLength = this.options.maxParamStringLength;
+		const ext = '...';
 
-		if (s.length > targetLength) {
-			const ext = '...';
+		if (s.length + ext.length > targetLength) {
 			return s.substring(0, targetLength - ext.length) + ext;
 		}
 

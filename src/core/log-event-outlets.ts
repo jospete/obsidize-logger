@@ -1,7 +1,7 @@
 import { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from './log-event-serializer';
-import { LogEventOutlet, LogEventTransport } from './log-event-transport';
+import { LogEventOutlet } from './log-event-transport';
 import { LogLevel } from './log-level';
-import type { ConsoleLike } from './types';
+import type { ConsoleLike, LogEventInterceptor } from './types';
 
 function invokeConsole(target: ConsoleLike, level: number, message: string, params: any[]): void {
 	if (level >= LogLevel.ERROR) {
@@ -46,8 +46,8 @@ export function consoleOutlet(config: ConsoleLogEventOutletConfig = {}): LogEven
 	};
 }
 
-export function transportOutlet(transport: LogEventTransport): LogEventOutlet {
-	return (ev) => transport.interceptEvent(ev);
+export function interceptorOutlet(interceptor: LogEventInterceptor): LogEventOutlet {
+	return (ev) => interceptor.interceptEvent(ev);
 }
 
 export interface SerializerOutletConfig {

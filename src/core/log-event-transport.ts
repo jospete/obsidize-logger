@@ -4,11 +4,12 @@ import { LogEventFilterPredicate, LogEventGuard } from './log-event-guard';
 import { Logger } from './logger';
 import type { LogEventInterceptor, LogEventLike } from './types';
 
-export type LogEventOutlet = EventEmitterDelegate<LogEventLike> | null | undefined | false;
+export type LogEventOutlet = EventEmitterDelegate<LogEventLike>;
+export type MaybeLogEventOutlet = LogEventOutlet | null | undefined | false;
 
 export interface LogEventTransportOptions {
-	outlets: LogEventOutlet[];
-	filter?: LogEventFilterPredicate;
+	outlets: MaybeLogEventOutlet[];
+	filter: LogEventFilterPredicate;
 }
 
 export class LogEventTransport extends LogEventGuard implements LogEventInterceptor {
