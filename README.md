@@ -31,7 +31,7 @@ import { getLogger } from './path/to/logger';
 
 const logger = getLogger('SomeModuleName');
 
-logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG   ] [SomeModuleName] initialized!"
+logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [SomeModuleName] initialized!"
 ```
 
 ## Simple JavaScript Example
@@ -63,7 +63,7 @@ window.getLogger = function(tag: string) {
 
 const logger = getLogger('SomeFileName');
 
-logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG   ] [SomeFileName] initialized!"
+logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [SomeFileName] initialized!"
 ```
 
 ## Advanced TypeScript Example
@@ -106,7 +106,7 @@ import { getLogger } from './path/to/logger';
 
 const logger = getLogger('SomeModuleName');
 
-logger.info('initialized!'); // prints "2025-06-13T02:52:45.416Z [INFO    ] [SomeModuleName] initialized!"
+logger.info('initialized!'); // prints "2025-06-13T02:52:45.416Z [INFO] [SomeModuleName] initialized!"
 
 logger.setCustomFilter((ev) => ev.level >= LogLevel.INFO);
 logger.debug('initialized!'); // does nothing because the custom filter suppresses debug logs
