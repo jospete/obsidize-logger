@@ -8,7 +8,9 @@ export interface LogEventSerializerLike {
 	serialize(ev: LogEventLike): string;
 }
 
-export interface LogEventSerializerOptions {
+export type LogEventSerializerPropertyFormatter = (value: any, serializer: LogEventSerializer) => string;
+
+export interface LogEventSerializerConfig {
 	/**
 	 * Object where keys are integer levels and values are a string which is the name of the level.
 	 * @default inverse of the `LogLevel` object literal
@@ -31,6 +33,16 @@ export interface LogEventSerializerOptions {
 	 */
 	levelNameFixedLength: number;
 	/**
+	 * Custom format for the serialized output.
+	 * When this is set, all `include***` flags will be ignored.
+	 * @default '{timestamp} [{level}] [{tag}] {message}{params}'
+	 */
+	format?: string;
+	/**
+	 * Transformers for each individual log event property.
+	 */
+	propertyFormatters: Record<string, LogEventSerializerPropertyFormatter>;
+	/**
 	 * Includes the timestamp in the serialized output
 	 * @default true
 	 */
@@ -52,7 +64,17 @@ export interface LogEventSerializerOptions {
 	includeParams: boolean;
 }
 
-const defaultOptions: LogEventSerializerOptions = {
+function identity<T>(value: T): T {
+	return value;
+}
+
+function deepMergeConfig(a: LogEventSerializerConfig, b: Partial<LogEventSerializerConfig>): LogEventSerializerConfig {
+	const levelNameMap = { ...a.levelNameMap, ...(b.levelNameMap || {}) };
+	const propertyFormatters = { ...a.propertyFormatters, ...(b.propertyFormatters || {}) };
+	return { ...a, ...b, levelNameMap, propertyFormatters };
+}
+
+const defaultOptions: LogEventSerializerConfig = {
 	levelNameMap: {
 		[LogLevel.VERBOSE]: 'VERBOSE',
 		[LogLevel.TRACE]: 'TRACE',
@@ -65,6 +87,20 @@ const defaultOptions: LogEventSerializerOptions = {
 	paramsSeperator: ' :: ',
 	maxParamStringLength: 250,
 	levelNameFixedLength: 0,
+	propertyFormatters: {
+		tag: identity,
+		message: identity,
+		timestamp: function (value: any): string {
+			return new Date(value).toJSON();
+		},
+		level: function (value: any, serializer: LogEventSerializer): string {
+			const levelName = serializer.config.levelNameMap[value] || String(value);
+			return levelName.padEnd(serializer.config.levelNameFixedLength, ' ');
+		},
+		params: function (value: any, serializer: LogEventSerializer): string {
+			return serializer.serializeParamList(value);
+		},
+	},
 	includeTimestamp: true,
 	includeLevel: true,
 	includeTag: true,
@@ -75,14 +111,16 @@ const defaultOptions: LogEventSerializerOptions = {
  * Configurable transformer to convert log events into string output.
  */
 export class LogEventSerializer implements LogEventSerializerLike {
-	private options: LogEventSerializerOptions;
+	public readonly config: LogEventSerializerConfig;
+	private format: string;
 
-	constructor(options: Partial<LogEventSerializerOptions> = {}) {
-		this.options = { ...defaultOptions, ...options };
+	constructor(config: Partial<LogEventSerializerConfig> = {}) {
+		this.config = deepMergeConfig(defaultOptions, config);
+		this.format = this.resolveFormatStringFromOptions();
 	}
 
-	public extend(options: Partial<LogEventSerializerOptions> = {}): LogEventSerializer {
-		return new LogEventSerializer({ ...this.options, ...options });
+	public extend(config: Partial<LogEventSerializerConfig> = {}): LogEventSerializer {
+		return new LogEventSerializer(deepMergeConfig(this.config, config));
 	}
 
 	public serialize(ev: LogEventLike): string {
@@ -90,29 +128,10 @@ export class LogEventSerializer implements LogEventSerializerLike {
 			return '';
 		}
 
-		const { tag, level, message, timestamp } = ev;
-		const timestampJson = new Date(timestamp).toJSON();
-		const levelName = this.options.levelNameMap![level] || String(level);
-		let result = message;
-
-		if (this.options.includeTag) {
-			result = `[${tag}] ${result}`;
-		}
-
-		if (this.options.includeLevel) {
-			const levelNamePadded = levelName.padEnd(this.options.levelNameFixedLength, ' ');
-			result = `[${levelNamePadded}] ${result}`;
-		}
-
-		if (this.options.includeTimestamp) {
-			result = `${timestampJson} ${result}`;
-		}
-
-		if (this.options.includeParams) {
-			result += this.serializeParamList(ev.params);
-		}
-
-		return result;
+		return this.format.replace(/\{(\w+)\}/g, (match: string, key: string) => {
+			const formatter = (this.config.propertyFormatters as any)[key];
+			return typeof formatter === 'function' ? formatter((ev as any)[key], this) : match;
+		});
 	}
 
 	public serializeParamList(params: any[] | undefined): string {
@@ -123,7 +142,7 @@ export class LogEventSerializer implements LogEventSerializerLike {
 		let result = '';
 
 		for (const p of params) {
-			result += this.options.paramsSeperator + this.serializeParam(p);
+			result += this.config.paramsSeperator + this.serializeParam(p);
 		}
 
 		return result;
@@ -138,7 +157,7 @@ export class LogEventSerializer implements LogEventSerializerLike {
 			s = param + '';
 		}
 
-		const targetLength = this.options.maxParamStringLength;
+		const targetLength = this.config.maxParamStringLength;
 		const ext = '...';
 
 		if (s.length + ext.length > targetLength) {
@@ -146,5 +165,31 @@ export class LogEventSerializer implements LogEventSerializerLike {
 		}
 
 		return s;
+	}
+
+	private resolveFormatStringFromOptions(): string {
+		if (this.config.format) {
+			return this.config.format;
+		}
+
+		let result = '{message}';
+
+		if (this.config.includeTag) {
+			result = `[{tag}] ${result}`;
+		}
+
+		if (this.config.includeLevel) {
+			result = `[{level}] ${result}`;
+		}
+
+		if (this.config.includeTimestamp) {
+			result = `{timestamp} ${result}`;
+		}
+
+		if (this.config.includeParams) {
+			result += '{params}';
+		}
+
+		return result;
 	}
 }

@@ -23,12 +23,36 @@ describe('LogEventSerializer', () => {
 		it('should inherit the properties of the extended serializer', () => {
 			const s = new LogEventSerializer({ includeParams: false });
 			const s2 = s.extend();
-			expect(s['options'].includeParams).toBe(s2['options'].includeParams);
+			expect(s.config.includeParams).toBe(s2.config.includeParams);
 		});
 		it('should override properties of the extended logger with any custom values given', () => {
 			const s = new LogEventSerializer({ includeParams: false });
 			const s2 = s.extend({ includeParams: true });
-			expect(s['options'].includeParams).not.toBe(s2['options'].includeParams);
+			expect(s.config.includeParams).not.toBe(s2.config.includeParams);
+		});
+	});
+
+	describe('serialize', () => {
+		it('should leave unknown property matchers as-is', () => {
+			const s = new LogEventSerializer({ format: '{message} {potato} [{level}]' });
+			const l = new LogEvent(LogLevel.DEBUG, 'test', 'a bunch of potatoes');
+			expect(s.serialize(l)).toBe('a bunch of potatoes {potato} [DEBUG]');
+		});
+		it('should respect custom level name lengths', () => {
+			const s = new LogEventSerializer({ format: '[{level}] {message}', levelNameFixedLength: 8 });
+			const l = new LogEvent(LogLevel.DEBUG, 'test', 'a bunch of potatoes');
+			expect(s.serialize(l)).toBe('[DEBUG   ] a bunch of potatoes');
+		});
+		it('should respect custom property formatters', () => {
+			const s = new LogEventSerializer({
+				format: '[{level}] {message}',
+				levelNameFixedLength: 8,
+				propertyFormatters: {
+					message: (value: string) => value.padStart(10, 'A'),
+				},
+			});
+			const l = new LogEvent(LogLevel.FATAL, 'test', 'H!');
+			expect(s.serialize(l)).toBe('[FATAL   ] AAAAAAAAH!');
 		});
 	});
 
