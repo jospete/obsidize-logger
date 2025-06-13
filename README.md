@@ -31,7 +31,7 @@ import { getLogger } from './path/to/logger';
 
 const logger = getLogger('SomeModuleName');
 
-logger.debug('initialized!'); // prints ""
+logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG   ] [SomeModuleName] initialized!"
 ```
 
 ## Simple JavaScript Example
@@ -41,7 +41,7 @@ Import the bundle for this library like so
 ```html
 <html>
   <head>
-    <script src=""></script>
+    <script src="https://raw.githubusercontent.com/jospete/obsidize-logger/refs/heads/main/packed/obsidize-logger.js"></script>
   </head>
 </html>
 ```
@@ -49,7 +49,7 @@ Import the bundle for this library like so
 Then use it
 
 ```javascript
-const { LogEventTransport } = window.obsidize.logger;
+const { LogEventTransport, consoleOutlet } = window.obsidize.logger;
 
 const transport = new LogEventTransport({
   outlets: [consoleOutlet()]
@@ -63,7 +63,7 @@ window.getLogger = function(name: string) {
 
 const logger = getLogger('SomeFileName');
 
-logger.debug('initialized!'); // prints ""
+logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG   ] [SomeFileName] initialized!"
 ```
 
 ## Advanced TypeScript Example
@@ -73,7 +73,9 @@ Each point of instantiation has configuration options to adjust transport / logg
 These configurations can translate directly over to JavaScript.
 
 ```typescript
-import { LogEventTransport, LogLevel, consoleOutlet } from '@obsidize/logger';
+import { LogEventTransport, LogLevel, consoleOutlet, serializerOutlet } from '@obsidize/logger';
+
+const isProdBuild = /* get flag from somewhere */ false;
 
 const transport = new LogEventTransport({
   // ignore debug and trace logs, and ignore logs with the tag "test"
@@ -81,8 +83,14 @@ const transport = new LogEventTransport({
     return ev.level >= LogLevel.INFO && ev.tag !== 'test';
   },
   outlets: [
-    consoleOutlet({
-      thing: true,
+    !isProdBuild && consoleOutlet({
+      includeLevel: true,
+      includeParams: true,
+    }),
+    serializerOutlet({
+      onNextLine: (str) => {
+        /* write the line to storage or send it to a remote server */
+      }
     })
   ]
 });
@@ -98,7 +106,7 @@ import { getLogger } from './path/to/logger';
 
 const logger = getLogger('SomeModuleName');
 
-logger.debug('initialized!'); // prints ""
+logger.info('initialized!'); // prints "2025-06-13T02:52:45.416Z [INFO    ] [SomeModuleName] initialized!"
 
 logger.setCustomFilter((ev) => ev.level >= LogLevel.INFO);
 logger.debug('initialized!'); // does nothing because the custom filter suppresses debug logs
