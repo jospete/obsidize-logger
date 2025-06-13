@@ -20,8 +20,8 @@ describe('@obsidize/logger', () => {
 				consoleOutlet({
 					target: mockConsole,
 					serializerConfig: {
-						includeLevel: true,
-						includeParams: true,
+						includeTimestamp: false,
+						includeParams: false,
 					},
 				}),
 			],
