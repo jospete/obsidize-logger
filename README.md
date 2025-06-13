@@ -89,8 +89,10 @@ const transport = new LogEventTransport({
   },
   outlets: [
     !isProdBuild && consoleOutlet({
-      includeLevel: true,
-      includeParams: true,
+      serializerConfig: {
+        includeLevel: true,
+        includeParams: true,
+      }
     }),
     serializerOutlet({
       onNextLine: (str) => {

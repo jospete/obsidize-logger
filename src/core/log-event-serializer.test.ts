@@ -19,6 +19,18 @@ describe('LogEventSerializer', () => {
 		expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: true :: [object Object] :: 1`);
 	});
 
+	describe('parseDelegateFrom', () => {
+		it('should use the provided delegate if it exists', () => {
+			const spy = jest.fn();
+			const target = LogEventSerializer.parseDelegateFrom({
+				serializeEvent: spy,
+				serializer: {} as any,
+				serializerConfig: {},
+			});
+			expect(target).toBe(spy);
+		});
+	});
+
 	describe('extend', () => {
 		it('should inherit the properties of the extended serializer', () => {
 			const s = new LogEventSerializer({ includeParams: false });

@@ -16,7 +16,15 @@ describe('@obsidize/logger', () => {
 	it('can run the readme examples', () => {
 		const mockConsole = getMockConsole();
 		const transport = new LogEventTransport({
-			outlets: [consoleOutlet({ target: mockConsole })],
+			outlets: [
+				consoleOutlet({
+					target: mockConsole,
+					serializerConfig: {
+						includeLevel: true,
+						includeParams: true,
+					},
+				}),
+			],
 		});
 
 		function getLogger(name: string) {

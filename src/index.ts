@@ -4,6 +4,8 @@ export { LogEventFilterPredicate, LogEventGuard } from './core/log-event-guard';
 export {
 	LogEventSerializer,
 	LogEventSerializerConfig,
+	LogEventSerializerDelegate,
+	LogEventSerializerDelegateConfig,
 	LogEventSerializerLike,
 	LogEventSerializerPropertyFormatter,
 } from './core/log-event-serializer';

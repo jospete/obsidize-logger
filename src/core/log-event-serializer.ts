@@ -2,12 +2,20 @@ import { LogLevel } from './log-level';
 import type { LogEventLike } from './types';
 
 /**
+ * Anonymous function variant of `LogEventSerializerLike`
+ */
+export type LogEventSerializerDelegate = (ev: LogEventLike) => string;
+
+/**
  * Common API for serializing log events
  */
 export interface LogEventSerializerLike {
 	serialize(ev: LogEventLike): string;
 }
 
+/**
+ * Delegate that transforms a value for a log event property into a string.
+ */
 export type LogEventSerializerPropertyFormatter = (value: any, serializer: LogEventSerializer) => string;
 
 export interface LogEventSerializerConfig {
@@ -64,6 +72,27 @@ export interface LogEventSerializerConfig {
 	includeParams: boolean;
 }
 
+/**
+ * Options that can be used to generate a serialization function
+ */
+export interface LogEventSerializerDelegateConfig {
+	/**
+	 * Direct serializer function reference.
+	 * Takes highest precedence if provided.
+	 */
+	serializeEvent?: LogEventSerializerDelegate;
+	/**
+	 * A serializer-like interface.
+	 * Will take precedence over `serializerConfig` if provided.
+	 */
+	serializer?: LogEventSerializerLike;
+	/**
+	 * Configuration for a new `LogEventSerializer` instance.
+	 * Lowest precedence, only used if no other options are provided.
+	 */
+	serializerConfig?: Partial<LogEventSerializerConfig>;
+}
+
 function identity<T>(value: T): T {
 	return value;
 }
@@ -117,6 +146,17 @@ export class LogEventSerializer implements LogEventSerializerLike {
 	constructor(config: Partial<LogEventSerializerConfig> = {}) {
 		this.config = deepMergeConfig(defaultOptions, config);
 		this.format = this.resolveFormatStringFromOptions();
+	}
+
+	/**
+	 * Obtains a serializer function from the given config
+	 * @param config - the options to parse a serializer delegate from
+	 * @returns a function that will convert
+	 */
+	public static parseDelegateFrom(config: LogEventSerializerDelegateConfig): LogEventSerializerDelegate {
+		if (typeof config.serializeEvent === 'function') return config.serializeEvent;
+		const serializer = config.serializer || new LogEventSerializer(config.serializerConfig);
+		return (ev) => serializer.serialize(ev);
 	}
 
 	public extend(config: Partial<LogEventSerializerConfig> = {}): LogEventSerializer {

@@ -1,4 +1,4 @@
-import { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from '../core/log-event-serializer';
+import { LogEventSerializer, LogEventSerializerDelegateConfig } from '../core/log-event-serializer';
 import { LogEventOutlet } from '../core/log-event-transport';
 import { LogLevel } from '../core/log-level';
 import type { ConsoleLike } from '../core/types';
@@ -17,23 +17,40 @@ function invokeConsole(target: ConsoleLike, level: number, message: string, para
 	target.log(message, ...params);
 }
 
+/**
+ * Delegate to invoke some method a console-like target.
+ * Acts as a proxy for the global `window.console` object (or any other provided target).
+ */
 export type ConsoleLogEventOutletInvoker = (target: ConsoleLike, level: number, message: string, params: any[]) => void;
 
-export interface ConsoleLogEventOutletConfig {
+export interface ConsoleLogEventOutletConfig extends LogEventSerializerDelegateConfig {
+	/**
+	 * The target to send serialized log events to
+	 * @default cosnole
+	 */
 	target?: ConsoleLike;
-	serializer?: LogEventSerializerLike;
-	serializerOptions?: LogEventSerializerOptions;
+	/**
+	 * The invocation handler for the provided console-like target.
+	 *
+	 * The default handler will narrow levels down to `LOG`, `WARN` and `ERROR`
+	 * to maximize compatibility with different runtime environments.
+	 */
 	invoke?: ConsoleLogEventOutletInvoker;
 }
 
+/**
+ * Send events to a target console-like instance.
+ * @param config - optional customization config
+ * @returns an outlet function that can be invoked by a transport
+ */
 export function consoleOutlet(config: ConsoleLogEventOutletConfig = {}): LogEventOutlet {
 	const target = config.target || console;
 	const invoke = config.invoke || invokeConsole;
-	const serializer = config.serializer || new LogEventSerializer(config.serializerOptions);
+	const serialize = LogEventSerializer.parseDelegateFrom(config);
 	return (ev) => {
 		const { level, params } = ev;
 		const p = Array.isArray(params) ? params : [];
-		const message = serializer.serialize(ev);
+		const message = serialize(ev);
 		invoke(target, level, message, p);
 	};
 }
