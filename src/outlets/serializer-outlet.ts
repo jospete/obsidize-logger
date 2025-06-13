@@ -20,7 +20,7 @@ export interface SerializerOutletConfig extends LogEventSerializerDelegateConfig
  * @returns an outlet function that can be invoked by a transport
  */
 export function serializerOutlet(config: SerializerOutletConfig): LogEventOutlet {
-	const seperator = config.seperator || '\n';
+	const seperator = typeof config.seperator === 'string' ? config.seperator : '\n';
 	const serialize = LogEventSerializer.parseDelegateFrom(config);
 	const callback = config.onNextLine;
 	return (ev) => {

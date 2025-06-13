@@ -15,4 +15,13 @@ describe('serializerOutlet', () => {
 		l.emit(LogLevel.DEBUG, 'message', [true], fixedDateTimestamp);
 		expect(spy).toHaveBeenCalledWith(`${fixedDateISO} [DEBUG] [test] message :: true\n`);
 	});
+	it('should allow explicit empty string seperators', () => {
+		const spy = jest.fn();
+		const t = new LogEventTransport({
+			outlets: [serializerOutlet({ onNextLine: spy, seperator: '' })],
+		});
+		const l = t.getLogger('test');
+		l.emit(LogLevel.DEBUG, 'message', [true], fixedDateTimestamp);
+		expect(spy).toHaveBeenCalledWith(`${fixedDateISO} [DEBUG] [test] message :: true`);
+	});
 });
