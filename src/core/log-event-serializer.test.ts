@@ -19,6 +19,19 @@ describe('LogEventSerializer', () => {
 		expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: true :: [object Object] :: 1`);
 	});
 
+	describe('extend', () => {
+		it('should inherit the properties of the extended serializer', () => {
+			const s = new LogEventSerializer({ includeParams: false });
+			const s2 = s.extend();
+			expect(s['options'].includeParams).toBe(s2['options'].includeParams);
+		});
+		it('should override properties of the extended logger with any custom values given', () => {
+			const s = new LogEventSerializer({ includeParams: false });
+			const s2 = s.extend({ includeParams: true });
+			expect(s['options'].includeParams).not.toBe(s2['options'].includeParams);
+		});
+	});
+
 	describe('config', () => {
 		it('should include all event data by default', () => {
 			const s = new LogEventSerializer();
@@ -56,6 +69,12 @@ describe('LogEventSerializer', () => {
 			const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [], fixedDateTimestamp);
 			const v = s.serialize(l);
 			expect(v).toBe(`[DEBUG] [test] message`);
+		});
+		it('should exclude params when configured to do so', () => {
+			const s = new LogEventSerializer({ includeParams: false });
+			const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [true], fixedDateTimestamp);
+			const v = s.serialize(l);
+			expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message`);
 		});
 		it('should truncate parameters to the given length', () => {
 			const s = new LogEventSerializer({ maxParamStringLength: 20 });
