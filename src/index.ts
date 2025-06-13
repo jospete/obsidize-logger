@@ -1,7 +1,12 @@
 export { EventEmitter, EventEmitterDelegate } from './core/event-emitter';
 export { LogEvent } from './core/log-event';
 export { LogEventFilterPredicate, LogEventGuard } from './core/log-event-guard';
-export { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from './core/log-event-serializer';
+export {
+	LogEventSerializer,
+	LogEventSerializerConfig,
+	LogEventSerializerLike,
+	LogEventSerializerPropertyFormatter,
+} from './core/log-event-serializer';
 export {
 	LogEventOutlet,
 	LogEventTransport,
