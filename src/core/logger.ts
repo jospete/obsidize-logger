@@ -2,6 +2,15 @@ import { LogEventGuard } from './log-event-guard';
 import { LogLevel } from './log-level';
 import type { ConsoleLike, LogEventInterceptor } from './types';
 
+/**
+ * Common logging interface to be used on a per-module basis.
+ * Can be configured to suppress events based on a custom filter,
+ * or disabled entirely.
+ *
+ * Events produced by an instance of this class will be
+ * passed along to the assigned interceptor for further
+ * processing / outlet handling.
+ */
 export class Logger extends LogEventGuard implements ConsoleLike {
 	constructor(public tag: string, public interceptor: LogEventInterceptor) {
 		super();

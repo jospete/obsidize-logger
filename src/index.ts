@@ -1,14 +1,6 @@
 export { EventEmitter, EventEmitterDelegate } from './core/event-emitter';
 export { LogEvent } from './core/log-event';
 export { LogEventFilterPredicate, LogEventGuard } from './core/log-event-guard';
-export {
-	ConsoleLogEventOutletConfig,
-	ConsoleLogEventOutletInvoker,
-	consoleOutlet,
-	interceptorOutlet,
-	serializerOutlet,
-	SerializerOutletConfig,
-} from './core/log-event-outlets';
 export { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from './core/log-event-serializer';
 export {
 	LogEventOutlet,
@@ -19,3 +11,6 @@ export {
 export { LogLevel } from './core/log-level';
 export { Logger } from './core/logger';
 export type { ConsoleLike, LogEventInterceptor, LogEventLike } from './core/types';
+export { ConsoleLogEventOutletConfig, ConsoleLogEventOutletInvoker, consoleOutlet } from './outlets/console-outlet';
+export { interceptorOutlet } from './outlets/interceptor-outlet';
+export { serializerOutlet, SerializerOutletConfig } from './outlets/serializer-outlet';

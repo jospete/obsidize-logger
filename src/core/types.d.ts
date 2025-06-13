@@ -1,3 +1,7 @@
+/**
+ * Common cross-section between the `window.console` global
+ * and `Logger` instances of this library.
+ */
 export interface ConsoleLike {
 	verbose?(message: string, ...params: any[]): void;
 	trace(message: string, ...params: any[]): void;
@@ -9,6 +13,9 @@ export interface ConsoleLike {
 	fatal?(message: string, ...params: any[]): void;
 }
 
+/**
+ * General shape of events produced by this library.
+ */
 export interface LogEventLike {
 	readonly level: number;
 	readonly tag: string;
@@ -17,6 +24,9 @@ export interface LogEventLike {
 	readonly timestamp: number;
 }
 
+/**
+ * Communication interface between `Logger` -> `LogEventTransport`
+ */
 export interface LogEventInterceptor {
 	interceptEvent(ev: LogEventLike): void;
 	createEvent(level: number, context: string, message: string, params?: any[], timestamp?: number): LogEventLike;

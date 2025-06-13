@@ -1,5 +1,8 @@
 import type { LogEventLike } from './types';
 
+/**
+ * Basic constructible event used by the rest of this library.
+ */
 export class LogEvent implements LogEventLike {
 	constructor(
 		public level: number,

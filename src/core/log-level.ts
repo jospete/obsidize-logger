@@ -1,3 +1,6 @@
+/**
+ * Core levels used by the `Logger` class to produce events.
+ */
 export const LogLevel = Object.freeze({
 	VERBOSE: 0,
 	TRACE: 1,

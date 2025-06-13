@@ -1,7 +1,7 @@
-import { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from './log-event-serializer';
-import { LogEventOutlet } from './log-event-transport';
-import { LogLevel } from './log-level';
-import type { ConsoleLike, LogEventInterceptor } from './types';
+import { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from '../core/log-event-serializer';
+import { LogEventOutlet } from '../core/log-event-transport';
+import { LogLevel } from '../core/log-level';
+import type { ConsoleLike } from '../core/types';
 
 function invokeConsole(target: ConsoleLike, level: number, message: string, params: any[]): void {
 	if (level >= LogLevel.ERROR) {
@@ -35,25 +35,5 @@ export function consoleOutlet(config: ConsoleLogEventOutletConfig = {}): LogEven
 		const p = Array.isArray(params) ? params : [];
 		const message = serializer.serialize(ev);
 		invoke(target, level, message, p);
-	};
-}
-
-export function interceptorOutlet(interceptor: LogEventInterceptor): LogEventOutlet {
-	return (ev) => interceptor.interceptEvent(ev);
-}
-
-export interface SerializerOutletConfig {
-	serializer?: LogEventSerializerLike;
-	serializerOptions?: LogEventSerializerOptions;
-	seperator?: string;
-	onNextLine: (line: string) => void;
-}
-
-export function serializerOutlet(config: SerializerOutletConfig): LogEventOutlet {
-	const seperator = config.seperator || '\n';
-	const serializer = config.serializer || new LogEventSerializer(config.serializerOptions);
-	const callback = config.onNextLine;
-	return (ev) => {
-		callback(serializer.serialize(ev) + seperator);
 	};
 }

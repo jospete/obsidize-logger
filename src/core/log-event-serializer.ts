@@ -1,31 +1,67 @@
 import { LogLevel } from './log-level';
 import type { LogEventLike } from './types';
 
+/**
+ * Common API for serializing log events
+ */
 export interface LogEventSerializerLike {
 	serialize(ev: LogEventLike): string;
 }
 
 export interface LogEventSerializerOptions {
+	/**
+	 * Object where keys are integer levels and values are a string which is the name of the level.
+	 * @default inverse of the `LogLevel` object literal
+	 */
 	levelNameMap: Record<number, string>;
+	/**
+	 * Seperator string that will be used as a prefix for each log parameter.
+	 * @default ' :: '
+	 */
 	paramsSeperator: string;
+	/**
+	 * The maximum allowed length for a serialized parameter before it is truncated.
+	 * @default 250
+	 */
 	maxParamStringLength: number;
+	/**
+	 * The minimum required length for level names.
+	 * This can help with alignment issues in large volume log output.
+	 * @default 0
+	 */
 	levelNameFixedLength: number;
+	/**
+	 * Includes the timestamp in the serialized output
+	 * @default true
+	 */
 	includeTimestamp: boolean;
+	/**
+	 * Includes the level in the serialized output
+	 * @default true
+	 */
 	includeLevel: boolean;
+	/**
+	 * Includes the tag in the serialized output
+	 * @default true
+	 */
 	includeTag: boolean;
+	/**
+	 * Includes all params in the serialized output
+	 * @default true
+	 */
 	includeParams: boolean;
 }
 
-function reverseKV(obj: Record<any, any>) {
-	const result: any = {};
-	for (const [k, v] of Object.entries(obj)) {
-		result[v] = k;
-	}
-	return result;
-}
-
 const defaultOptions: LogEventSerializerOptions = {
-	levelNameMap: reverseKV(LogLevel),
+	levelNameMap: {
+		[LogLevel.VERBOSE]: 'VERBOSE',
+		[LogLevel.TRACE]: 'TRACE',
+		[LogLevel.DEBUG]: 'DEBUG',
+		[LogLevel.INFO]: 'INFO',
+		[LogLevel.WARN]: 'WARN',
+		[LogLevel.ERROR]: 'ERROR',
+		[LogLevel.FATAL]: 'FATAL',
+	},
 	paramsSeperator: ' :: ',
 	maxParamStringLength: 250,
 	levelNameFixedLength: 0,
@@ -35,11 +71,18 @@ const defaultOptions: LogEventSerializerOptions = {
 	includeParams: true,
 };
 
+/**
+ * Configurable transformer to convert log events into string output.
+ */
 export class LogEventSerializer implements LogEventSerializerLike {
 	private options: LogEventSerializerOptions;
 
 	constructor(options: Partial<LogEventSerializerOptions> = {}) {
 		this.options = { ...defaultOptions, ...options };
+	}
+
+	public extend(options: Partial<LogEventSerializerOptions> = {}): LogEventSerializer {
+		return new LogEventSerializer({ ...this.options, ...options });
 	}
 
 	public serialize(ev: LogEventLike): string {

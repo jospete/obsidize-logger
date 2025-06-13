@@ -1,5 +1,20 @@
+/**
+ * Callback that accepts a single value which was
+ * emitted from the `EventEmitter` instance.
+ */
 export type EventEmitterDelegate<T> = (value: T) => any;
 
+/**
+ * Lightweight event broadcaster.
+ *
+ * While this class' primary use in the library is for
+ * sending log events to registered listeners, it
+ * is defined to be generic, and can technically
+ * emit any type of value.
+ *
+ * Feel free to use this for non-logging things since
+ * javascript has no built-in observer pattern...
+ */
 export class EventEmitter<T> {
 	private mListeners: EventEmitterDelegate<T>[] = [];
 
@@ -7,8 +22,9 @@ export class EventEmitter<T> {
 		return this.mListeners.length;
 	}
 
-	public emit<R extends T = T>(value: R): void {
+	public emit<R extends T = T>(value: R): this {
 		for (const listener of this.mListeners) listener(value);
+		return this;
 	}
 
 	public hasListener<R extends T = T>(listener: EventEmitterDelegate<R>): boolean {
