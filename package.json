@@ -40,7 +40,8 @@
 		"console",
 		"browser",
 		"transport",
-		"filter"
+		"filter",
+		"events"
 	],
 	"author": "obsidize@gmail.com",
 	"license": "MIT",
