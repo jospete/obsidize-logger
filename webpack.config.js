@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = {
+const baseConfig = {
 	entry: './src/index.ts',
 	mode: 'production',
 	target: ['web', 'es5'],
@@ -16,12 +16,28 @@ module.exports = {
 	resolve: {
 		extensions: ['.ts'],
 	},
-	output: {
-		filename: 'index.es5.js',
-		path: path.resolve(__dirname, 'dist'),
-		library: {
-			name: 'ObsidizeLogger',
-			type: 'global',
+};
+
+module.exports = [
+	{
+		...baseConfig,
+		output: {
+			filename: 'obsidize-logger.js',
+			path: path.resolve(__dirname, 'packed'),
+			library: {
+				name: 'ObsidizeLogger',
+				type: 'global',
+			},
 		},
 	},
-};
+	{
+		...baseConfig,
+		output: {
+			filename: 'index.cjs',
+			path: path.resolve(__dirname, 'dist'),
+			library: {
+				type: 'commonjs2',
+			},
+		},
+	},
+];

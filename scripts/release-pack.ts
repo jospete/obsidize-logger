@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { cpSync, existsSync, mkdirSync, readJsonSync, renameSync, rmSync } from 'fs-extra';
+import { existsSync, mkdirSync, readJsonSync, renameSync, rmSync } from 'fs-extra';
 import { resolve } from 'path';
 
 const { version } = readJsonSync('./package.json');
@@ -25,10 +25,6 @@ async function run(distDirectory: string, outputDirectory: string): Promise<void
 
 	console.log(`rename ${packFilePath} -> ${renameTarget}`);
 	renameSync(packFilePath, renameTarget);
-
-	const es5Src = resolve(distDirectory, 'index.es5.js');
-	const es5Dest = resolve(outputDirectory, renameTarget.replace(/\.tgz$/, '.js'));
-	cpSync(es5Src, es5Dest);
 }
 
 run('./dist', './packed').catch(console.error);
