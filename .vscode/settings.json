@@ -1,0 +1,21 @@
+{
+	"editor.formatOnSave": true,
+	"javascript.preferences.quoteStyle": "single",
+	"typescript.preferences.quoteStyle": "single",
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"editor.tabCompletion": "on",
+	"editor.detectIndentation": false,
+	"editor.wordWrap": "wordWrapColumn",
+	"editor.wordWrapColumn": 120,
+	"typescript.preferences.importModuleSpecifier": "relative",
+	"typescript.format.semicolons": "insert",
+	"[typescript]": {
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "always"
+		}
+	},
+	"prettier.singleQuote": true,
+	"prettier.useTabs": true,
+	"prettier.printWidth": 120
+}
