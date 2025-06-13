@@ -51,14 +51,8 @@ export class LogEventTransport extends LogEventGuard implements LogEventIntercep
 		if (this.test(ev)) this.events.emit(ev);
 	}
 
-	public createEvent(
-		level: number,
-		context: string,
-		message: string,
-		params?: any[],
-		timestamp?: number
-	): LogEventLike {
-		return new LogEvent(level, context, message, params, timestamp);
+	public createEvent(level: number, tag: string, message: string, params?: any[], timestamp?: number): LogEventLike {
+		return new LogEvent(level, tag, message, params, timestamp);
 	}
 
 	public configure(options: Partial<LogEventTransportOptions>): void {

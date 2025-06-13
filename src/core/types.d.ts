@@ -29,5 +29,5 @@ export interface LogEventLike {
  */
 export interface LogEventInterceptor {
 	interceptEvent(ev: LogEventLike): void;
-	createEvent(level: number, context: string, message: string, params?: any[], timestamp?: number): LogEventLike;
+	createEvent(level: number, tag: string, message: string, params?: any[], timestamp?: number): LogEventLike;
 }
