@@ -93,10 +93,6 @@ export interface LogEventSerializerDelegateConfig {
 	serializerConfig?: Partial<LogEventSerializerConfig>;
 }
 
-function identity<T>(value: T): T {
-	return value;
-}
-
 function deepMergeConfig(a: LogEventSerializerConfig, b: Partial<LogEventSerializerConfig>): LogEventSerializerConfig {
 	const levelNameMap = { ...a.levelNameMap, ...(b.levelNameMap || {}) };
 	const propertyFormatters = { ...a.propertyFormatters, ...(b.propertyFormatters || {}) };
@@ -117,8 +113,6 @@ const defaultOptions: LogEventSerializerConfig = {
 	maxParamStringLength: 250,
 	levelNameFixedLength: 0,
 	propertyFormatters: {
-		tag: identity,
-		message: identity,
 		timestamp: function (value: any): string {
 			return new Date(value).toJSON();
 		},
@@ -170,7 +164,12 @@ export class LogEventSerializer implements LogEventSerializerLike {
 
 		return this.format.replace(/\{(\w+)\}/g, (match: string, key: string) => {
 			const formatter = (this.config.propertyFormatters as any)[key];
-			return typeof formatter === 'function' ? formatter((ev as any)[key], this) : match;
+			const value = (ev as any)[key];
+
+			if (typeof formatter === 'function') return formatter(value, this);
+			if (key in ev) return String(value);
+
+			return match;
 		});
 	}
 
