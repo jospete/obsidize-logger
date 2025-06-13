@@ -7,6 +7,11 @@ import type { LogEventLike } from './types';
 export type LogEventSerializerDelegate = (ev: LogEventLike) => string;
 
 /**
+ * Delegate that transforms a value for a log event property into a string.
+ */
+export type LogEventSerializerPropertyFormatter = (value: any, serializer: LogEventSerializer) => string;
+
+/**
  * Common API for serializing log events
  */
 export interface LogEventSerializerLike {
@@ -14,9 +19,25 @@ export interface LogEventSerializerLike {
 }
 
 /**
- * Delegate that transforms a value for a log event property into a string.
+ * Options that can be used to generate a serialization function
  */
-export type LogEventSerializerPropertyFormatter = (value: any, serializer: LogEventSerializer) => string;
+export interface LogEventSerializerDelegateConfig {
+	/**
+	 * Direct serializer function reference.
+	 * Takes highest precedence if provided.
+	 */
+	serializeEvent?: LogEventSerializerDelegate;
+	/**
+	 * A serializer-like interface.
+	 * Will take precedence over `serializerConfig` if provided.
+	 */
+	serializer?: LogEventSerializerLike;
+	/**
+	 * Configuration for a new `LogEventSerializer` instance.
+	 * Lowest precedence, only used if no other options are provided.
+	 */
+	serializerConfig?: Partial<LogEventSerializerConfig>;
+}
 
 export interface LogEventSerializerConfig {
 	/**
@@ -72,33 +93,6 @@ export interface LogEventSerializerConfig {
 	includeParams: boolean;
 }
 
-/**
- * Options that can be used to generate a serialization function
- */
-export interface LogEventSerializerDelegateConfig {
-	/**
-	 * Direct serializer function reference.
-	 * Takes highest precedence if provided.
-	 */
-	serializeEvent?: LogEventSerializerDelegate;
-	/**
-	 * A serializer-like interface.
-	 * Will take precedence over `serializerConfig` if provided.
-	 */
-	serializer?: LogEventSerializerLike;
-	/**
-	 * Configuration for a new `LogEventSerializer` instance.
-	 * Lowest precedence, only used if no other options are provided.
-	 */
-	serializerConfig?: Partial<LogEventSerializerConfig>;
-}
-
-function deepMergeConfig(a: LogEventSerializerConfig, b: Partial<LogEventSerializerConfig>): LogEventSerializerConfig {
-	const levelNameMap = { ...a.levelNameMap, ...(b.levelNameMap || {}) };
-	const propertyFormatters = { ...a.propertyFormatters, ...(b.propertyFormatters || {}) };
-	return { ...a, ...b, levelNameMap, propertyFormatters };
-}
-
 const defaultOptions: LogEventSerializerConfig = {
 	levelNameMap: {
 		[LogLevel.VERBOSE]: 'VERBOSE',
@@ -117,7 +111,7 @@ const defaultOptions: LogEventSerializerConfig = {
 			return new Date(value).toJSON();
 		},
 		level: function (value: any, serializer: LogEventSerializer): string {
-			const levelName = serializer.config.levelNameMap[value] || String(value);
+			const levelName = serializer.config.levelNameMap[value] || `L-${value}`;
 			return levelName.padEnd(serializer.config.levelNameFixedLength, ' ');
 		},
 		params: function (value: any, serializer: LogEventSerializer): string {
@@ -130,6 +124,38 @@ const defaultOptions: LogEventSerializerConfig = {
 	includeParams: true,
 };
 
+function deepMergeConfig(a: LogEventSerializerConfig, b: Partial<LogEventSerializerConfig>): LogEventSerializerConfig {
+	const levelNameMap = { ...a.levelNameMap, ...(b.levelNameMap || {}) };
+	const propertyFormatters = { ...a.propertyFormatters, ...(b.propertyFormatters || {}) };
+	return { ...a, ...b, levelNameMap, propertyFormatters };
+}
+
+function resolveFormatStringFromConfig(config: LogEventSerializerConfig): string {
+	if (typeof config.format === 'string' && config.format.length > 0) {
+		return config.format;
+	}
+
+	let result = '{message}';
+
+	if (config.includeTag) {
+		result = `[{tag}] ${result}`;
+	}
+
+	if (config.includeLevel) {
+		result = `[{level}] ${result}`;
+	}
+
+	if (config.includeTimestamp) {
+		result = `{timestamp} ${result}`;
+	}
+
+	if (config.includeParams) {
+		result += '{params}';
+	}
+
+	return result;
+}
+
 /**
  * Configurable transformer to convert log events into string output.
  */
@@ -139,7 +165,7 @@ export class LogEventSerializer implements LogEventSerializerLike {
 
 	constructor(config: Partial<LogEventSerializerConfig> = {}) {
 		this.config = deepMergeConfig(defaultOptions, config);
-		this.format = this.resolveFormatStringFromOptions();
+		this.format = resolveFormatStringFromConfig(this.config);
 	}
 
 	/**
@@ -204,31 +230,5 @@ export class LogEventSerializer implements LogEventSerializerLike {
 		}
 
 		return s;
-	}
-
-	private resolveFormatStringFromOptions(): string {
-		if (typeof this.config.format === 'string' && this.config.format.length > 0) {
-			return this.config.format;
-		}
-
-		let result = '{message}';
-
-		if (this.config.includeTag) {
-			result = `[{tag}] ${result}`;
-		}
-
-		if (this.config.includeLevel) {
-			result = `[{level}] ${result}`;
-		}
-
-		if (this.config.includeTimestamp) {
-			result = `{timestamp} ${result}`;
-		}
-
-		if (this.config.includeParams) {
-			result += '{params}';
-		}
-
-		return result;
 	}
 }

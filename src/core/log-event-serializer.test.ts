@@ -86,7 +86,7 @@ describe('LogEventSerializer', () => {
 			const s = new LogEventSerializer();
 			const l = new LogEvent(69, 'test', 'message', [true], fixedDateTimestamp);
 			const v = s.serialize(l);
-			expect(v).toBe(`${fixedDateISO} [69] [test] message :: true`);
+			expect(v).toBe(`${fixedDateISO} [L-69] [test] message :: true`);
 		});
 		it('should exclude the tag when configured to do so', () => {
 			const s = new LogEventSerializer({ includeTag: false });
