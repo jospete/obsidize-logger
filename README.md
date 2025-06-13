@@ -11,6 +11,8 @@ Yet another javascript logging library, created to minimize friction with other 
 - Built-in filtering
 - Works anywhere - Browsers, NodeJS, Cordova, Capacitor, React Native, anything that can run javascript
 
+For more info, see the [API docs](https://jospete.github.io/obsidize-logger/)
+
 ## Simple TypeScript Example
 
 ```typescript
