@@ -29,15 +29,7 @@ export interface ConsoleLogEventOutletConfig {
 export function consoleOutlet(config: ConsoleLogEventOutletConfig = {}): LogEventOutlet {
 	const target = config.target || console;
 	const invoke = config.invoke || invokeConsole;
-	const serializer =
-		config.serializer ||
-		new LogEventSerializer(
-			config.serializerOptions || {
-				includeTimestamp: false,
-				includeLevel: false,
-				includeParams: false,
-			}
-		);
+	const serializer = config.serializer || new LogEventSerializer(config.serializerOptions);
 	return (ev) => {
 		const { level, params } = ev;
 		const p = Array.isArray(params) ? params : [];

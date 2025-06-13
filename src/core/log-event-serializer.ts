@@ -28,7 +28,7 @@ const defaultOptions: LogEventSerializerOptions = {
 	levelNameMap: reverseKV(LogLevel),
 	paramsSeperator: ' :: ',
 	maxParamStringLength: 250,
-	levelNameFixedLength: 8,
+	levelNameFixedLength: 0,
 	includeTimestamp: true,
 	includeLevel: true,
 	includeTag: true,

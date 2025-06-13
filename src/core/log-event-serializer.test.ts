@@ -16,7 +16,7 @@ describe('LogEventSerializer', () => {
 		const s = new LogEventSerializer();
 		const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [true, obj, 1], fixedDateTimestamp);
 		const v = s.serialize(l);
-		expect(v).toBe(`${fixedDateISO} [DEBUG   ] [test] message :: true :: [object Object] :: 1`);
+		expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: true :: [object Object] :: 1`);
 	});
 
 	describe('config', () => {
@@ -24,7 +24,7 @@ describe('LogEventSerializer', () => {
 			const s = new LogEventSerializer();
 			const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [true], fixedDateTimestamp);
 			const v = s.serialize(l);
-			expect(v).toBe(`${fixedDateISO} [DEBUG   ] [test] message :: true`);
+			expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: true`);
 		});
 		it('should return an empty string if the event is falsy', () => {
 			const s = new LogEventSerializer();
@@ -37,13 +37,13 @@ describe('LogEventSerializer', () => {
 			const s = new LogEventSerializer();
 			const l = new LogEvent(69, 'test', 'message', [true], fixedDateTimestamp);
 			const v = s.serialize(l);
-			expect(v).toBe(`${fixedDateISO} [69      ] [test] message :: true`);
+			expect(v).toBe(`${fixedDateISO} [69] [test] message :: true`);
 		});
 		it('should exclude the tag when configured to do so', () => {
 			const s = new LogEventSerializer({ includeTag: false });
 			const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [true], fixedDateTimestamp);
 			const v = s.serialize(l);
-			expect(v).toBe(`${fixedDateISO} [DEBUG   ] message :: true`);
+			expect(v).toBe(`${fixedDateISO} [DEBUG] message :: true`);
 		});
 		it('should exclude the level when configured to do so', () => {
 			const s = new LogEventSerializer({ includeLevel: false });
@@ -55,7 +55,7 @@ describe('LogEventSerializer', () => {
 			const s = new LogEventSerializer({ includeTimestamp: false });
 			const l = new LogEvent(LogLevel.DEBUG, 'test', 'message', [], fixedDateTimestamp);
 			const v = s.serialize(l);
-			expect(v).toBe(`[DEBUG   ] [test] message`);
+			expect(v).toBe(`[DEBUG] [test] message`);
 		});
 		it('should truncate parameters to the given length', () => {
 			const s = new LogEventSerializer({ maxParamStringLength: 20 });
@@ -67,7 +67,7 @@ describe('LogEventSerializer', () => {
 				fixedDateTimestamp
 			);
 			const v = s.serialize(l);
-			expect(v).toBe(`${fixedDateISO} [DEBUG   ] [test] message :: {\"thisIsMoreThanT...`);
+			expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: {\"thisIsMoreThanT...`);
 		});
 	});
 });

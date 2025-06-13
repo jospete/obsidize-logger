@@ -65,7 +65,7 @@ describe('LogEventOutlet', () => {
 			});
 			const l = t.getLogger('test');
 			l.emit(LogLevel.DEBUG, 'message', [true], fixedDateTimestamp);
-			expect(spy).toHaveBeenCalledWith(`${fixedDateISO} [DEBUG   ] [test] message :: true\n`);
+			expect(spy).toHaveBeenCalledWith(`${fixedDateISO} [DEBUG] [test] message :: true\n`);
 		});
 	});
 });

@@ -3,8 +3,7 @@ const path = require('path');
 module.exports = {
 	entry: './src/index.ts',
 	mode: 'production',
-	target: ['web'],
-	externals: ['tslib'],
+	target: ['web', 'es5'],
 	module: {
 		rules: [
 			{
@@ -21,8 +20,8 @@ module.exports = {
 		filename: 'index.es5.js',
 		path: path.resolve(__dirname, 'dist'),
 		library: {
-			name: 'obsidize.logger',
-			type: 'window',
+			name: 'ObsidizeLogger',
+			type: 'global',
 		},
 	},
 };

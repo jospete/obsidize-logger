@@ -21,8 +21,8 @@ const transport = new LogEventTransport({
   outlets: [consoleOutlet()]
 });
 
-export function getLogger(name: string) {
-  return transport.getLogger(name);
+export function getLogger(tag: string) {
+  return transport.getLogger(tag);
 }
 
 // ... in some other file ...
@@ -49,14 +49,14 @@ Import the bundle for this library like so
 Then use it
 
 ```javascript
-const { LogEventTransport, consoleOutlet } = window.obsidize.logger;
+const { LogEventTransport, consoleOutlet } = window.ObsidizeLogger;
 
 const transport = new LogEventTransport({
   outlets: [consoleOutlet()]
 });
 
-window.getLogger = function(name: string) {
-  return transport.getLogger(name);
+window.getLogger = function(tag: string) {
+  return transport.getLogger(tag);
 };
 
 // ... in some other file ...
@@ -95,8 +95,8 @@ const transport = new LogEventTransport({
   ]
 });
 
-export function getLogger(name: string) {
-  return transport.getLogger(name);
+export function getLogger(tag: string) {
+  return transport.getLogger(tag);
 }
 
 // ... in some other file ...

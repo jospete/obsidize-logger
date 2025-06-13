@@ -1,6 +1,6 @@
 {
 	"name": "@obsidize/logger",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "A tiny javascript logging library",
 	"main": "index.es5.js",
 	"module": "index.js",

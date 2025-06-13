@@ -5,9 +5,9 @@ export {
 	ConsoleLogEventOutletConfig,
 	ConsoleLogEventOutletInvoker,
 	consoleOutlet,
+	interceptorOutlet,
 	serializerOutlet,
 	SerializerOutletConfig,
-	transportOutlet,
 } from './core/log-event-outlets';
 export { LogEventSerializer, LogEventSerializerLike, LogEventSerializerOptions } from './core/log-event-serializer';
 export {
