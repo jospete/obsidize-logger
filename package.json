@@ -34,6 +34,7 @@
 		"url": "git+https://github.com/jospete/obsidize-logger.git"
 	},
 	"keywords": [
+		"obsidize",
 		"log",
 		"logger",
 		"console",
