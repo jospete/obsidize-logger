@@ -55,7 +55,7 @@ const transport = new LogEventTransport({
   outlets: [consoleOutlet()]
 });
 
-window.getLogger = function(tag: string) {
+window.getLogger = function(tag) {
   return transport.getLogger(tag);
 };
 
