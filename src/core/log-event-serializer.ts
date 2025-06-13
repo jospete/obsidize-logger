@@ -200,7 +200,7 @@ export class LogEventSerializer implements LogEventSerializerLike {
 		const targetLength = this.config.maxParamStringLength;
 		const ext = '...';
 
-		if (s.length + ext.length > targetLength) {
+		if (s.length - ext.length > targetLength) {
 			return s.substring(0, targetLength - ext.length) + ext;
 		}
 
@@ -208,7 +208,7 @@ export class LogEventSerializer implements LogEventSerializerLike {
 	}
 
 	private resolveFormatStringFromOptions(): string {
-		if (this.config.format) {
+		if (typeof this.config.format === 'string' && this.config.format.length > 0) {
 			return this.config.format;
 		}
 
