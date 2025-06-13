@@ -12,12 +12,12 @@ export {
 export {
 	LogEventOutlet,
 	LogEventTransport,
-	LogEventTransportOptions,
+	LogEventTransportConfig,
 	MaybeLogEventOutlet,
 } from './core/log-event-transport';
 export { LogLevel } from './core/log-level';
 export { Logger } from './core/logger';
 export type { ConsoleLike, LogEventInterceptor, LogEventLike } from './core/types';
-export { ConsoleLogEventOutletConfig, ConsoleLogEventOutletInvoker, consoleOutlet } from './outlets/console-outlet';
+export { consoleOutlet, ConsoleOutletConfig, ConsoleOutletInvoker } from './outlets/console-outlet';
 export { interceptorOutlet } from './outlets/interceptor-outlet';
 export { serializerOutlet, SerializerOutletConfig } from './outlets/serializer-outlet';

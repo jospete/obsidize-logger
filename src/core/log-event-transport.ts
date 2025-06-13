@@ -14,7 +14,7 @@ export type LogEventOutlet = EventEmitterDelegate<LogEventLike>;
  */
 export type MaybeLogEventOutlet = LogEventOutlet | null | undefined | false;
 
-export interface LogEventTransportOptions {
+export interface LogEventTransportConfig {
 	/**
 	 * A list of outlet configurations to trigger side-effects
 	 * when the transport receives an event.
@@ -38,7 +38,7 @@ export interface LogEventTransportOptions {
 export class LogEventTransport extends LogEventGuard implements LogEventInterceptor {
 	public readonly events = new EventEmitter<LogEventLike>();
 
-	constructor(options: Partial<LogEventTransportOptions> = {}) {
+	constructor(options: Partial<LogEventTransportConfig> = {}) {
 		super();
 		this.configure(options);
 	}
@@ -55,7 +55,7 @@ export class LogEventTransport extends LogEventGuard implements LogEventIntercep
 		return new LogEvent(level, tag, message, params, timestamp);
 	}
 
-	public configure(options: Partial<LogEventTransportOptions>): void {
+	public configure(options: Partial<LogEventTransportConfig>): void {
 		this.events.removeAllListeners();
 
 		if (Array.isArray(options.outlets)) {
