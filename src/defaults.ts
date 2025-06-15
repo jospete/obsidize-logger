@@ -1,6 +1,6 @@
 import { LogEventTransport } from './core/log-event-transport';
 import { Logger } from './core/logger';
-import { consoleOutlet } from './outputs/console-outlet';
+import { consoleOutlet } from './outputs/console-output';
 
 let defaultTransport: LogEventTransport | undefined;
 
