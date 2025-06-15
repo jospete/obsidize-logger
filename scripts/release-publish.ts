@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
-import { readFileSync } from 'fs';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import yargs from 'yargs';
 
 const { version } = JSON.parse(readFileSync('./package.json').toString());
@@ -13,7 +13,7 @@ function git(cmd: string): Buffer | number {
 	return smokeTest ? 0 : execSync(fullCmd, { stdio: 'inherit' });
 }
 
-async function main() {
+function main() {
 	const versionTag = version;
 	const gitStatusOutput = execSync('git status').toString();
 	const currentBranchNameMatch = /On branch (\S+)/.exec(gitStatusOutput);
@@ -31,4 +31,4 @@ async function main() {
 	git(`push -u origin --tags ${currentBranchName}`);
 }
 
-main().catch(console.error);
+main();

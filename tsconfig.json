@@ -12,13 +12,23 @@
 		"forceConsistentCasingInFileNames": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"module": "ES2015",
+		"module": "esnext",
 		"moduleResolution": "node",
 		"outDir": "./dist",
 		"rootDir": "src",
-		"target": "ES6",
-		"lib": ["ES6", "ES2017"]
+		"target": "es6"
 	},
-	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules/", "tests/", "scripts/", "docs/", "src/test/", "src/**/*.test.ts", "dist/"]
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules/",
+		"tests/",
+		"scripts/",
+		"docs/",
+		"src/test/",
+		"src/**/*.test.ts",
+		"src/**/*.mock.ts",
+		"dist/"
+	]
 }
