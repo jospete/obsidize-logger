@@ -8,9 +8,3 @@ import type { LogEventConsumer, LogEventInterceptor } from '../core/types';
 export function interceptorOutput(interceptor: LogEventInterceptor): LogEventConsumer {
 	return interceptor.forwardRef;
 }
-
-/**
- * Alias of `interceptorOutput`
- * @deprecated
- */
-export const interceptorOutlet = interceptorOutput;

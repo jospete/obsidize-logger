@@ -1,7 +1,7 @@
+import { getMockConsole } from './console.mock';
 import { LogEventTransport } from './log-event-transport';
 import { LogLevel } from './log-level';
 import { Logger } from './logger';
-import { ConsoleLike } from './types';
 
 describe('Logger', () => {
 	it('should be created', () => {
@@ -10,16 +10,7 @@ describe('Logger', () => {
 
 	it('should implement the ConsoleLike interface', () => {
 		const l = new Logger('test', new LogEventTransport());
-		const c: ConsoleLike = {
-			verbose: () => {},
-			trace: () => {},
-			debug: () => {},
-			log: () => {},
-			info: () => {},
-			warn: () => {},
-			error: () => {},
-			fatal: () => {},
-		};
+		const c = getMockConsole();
 
 		for (const k of Object.keys(c)) {
 			expect(() => (l as any)[k]('test')).not.toThrow();

@@ -1,5 +1,5 @@
 import { LogEventSerializer, LogEventSerializerDelegateConfig } from '../core/log-event-serializer';
-import { LogEventConsumer } from '../core/types';
+import type { LogEventConsumer } from '../core/types';
 
 export interface SerializerOutputConfig extends LogEventSerializerDelegateConfig {
 	/**
@@ -27,9 +27,3 @@ export function serializerOutput(config: SerializerOutputConfig): LogEventConsum
 		callback(serialize(ev) + seperator);
 	};
 }
-
-/**
- * Alias of `serializerOutput`
- * @deprecated
- */
-export const serializerOutlet = serializerOutput;

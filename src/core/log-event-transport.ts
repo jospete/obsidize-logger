@@ -15,11 +15,6 @@ export interface LogEventTransportConfig {
 	 */
 	outputs: Maybe<LogEventConsumer>[];
 	/**
-	 * Alias of `outputs`
-	 * @deprecated
-	 */
-	outlets: Maybe<LogEventConsumer>[];
-	/**
 	 * A custom filter function to suppress log events
 	 * if the filter's conditions are not met.
 	 */
@@ -66,7 +61,7 @@ export class LogEventTransport extends LogEventGuard implements LogEventProducer
 	public configure(config: Partial<LogEventTransportConfig>): void {
 		this.events.removeAllListeners();
 		const inputs = config.inputs;
-		const outputs = config.outputs || config.outlets;
+		const outputs = config.outputs;
 
 		if (typeof config.filter === 'function') {
 			this.setCustomFilter(config.filter);

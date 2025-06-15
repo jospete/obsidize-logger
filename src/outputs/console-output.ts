@@ -53,9 +53,3 @@ export function consoleOutput(config: ConsoleOutputConfig = {}): LogEventConsume
 		invoke(target, level, message, p);
 	};
 }
-
-/**
- * Alias of `consoleOutput`
- * @deprecated
- */
-export const consoleOutlet = consoleOutput;

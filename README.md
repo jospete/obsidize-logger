@@ -11,74 +11,38 @@ Yet another javascript logging library, created to minimize friction with other 
 - Built-in filtering
 - Works anywhere - Browsers, NodeJS, Cordova, Capacitor, React Native, anything that can run javascript
 
-For more info / examples:
+## Usage
 
-- [API docs](https://jospete.github.io/obsidize-logger/)
-- [Unit Tests](https://github.com/jospete/obsidize-logger/tree/main/src)
+Simple starter:
 
-## Simple TypeScript Example
+```typescript
+import { log } from '@obsidize/logger';
+
+const logger = log('Main');
+
+logger.debug('test!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!" to the console
+```
+
+Explicit configuration equivalent of the starter:
+
+```typescript
+import { LogEventTransport, consoleOutput } from '@obsidize/logger';
+
+const transport = new LogEventTransport({
+	outputs: [consoleOutput()]
+});
+
+const logger = transport.getLogger('Main');
+
+logger.debug('test!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!" to the console
+```
+
+Advanced configuration example:
 
 ```typescript
 // logger.ts
-import { LogEventTransport, consoleOutlet } from '@obsidize/logger';
-
-const transport = new LogEventTransport({
-  outlets: [consoleOutlet()]
-});
-
-export function getLogger(tag: string) {
-  return transport.getLogger(tag);
-}
-
-// ... in some other file ...
-
-import { getLogger } from './path/to/logger';
-
-const logger = getLogger('SomeModuleName');
-
-logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [SomeModuleName] initialized!"
-```
-
-## Simple JavaScript Example
-
-Import the bundle for this library like so
-
-```html
-<html>
-  <head>
-    <script src="https://raw.githubusercontent.com/jospete/obsidize-logger/refs/heads/main/packed/obsidize-logger.js"></script>
-  </head>
-</html>
-```
-
-Then use it
-
-```javascript
-const { LogEventTransport, consoleOutlet } = window.ObsidizeLogger;
-
-const transport = new LogEventTransport({
-  outlets: [consoleOutlet()]
-});
-
-window.getLogger = function(tag) {
-  return transport.getLogger(tag);
-};
-
-// ... in some other file ...
-
-const logger = getLogger('SomeFileName');
-
-logger.debug('initialized!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [SomeFileName] initialized!"
-```
-
-## Advanced TypeScript Example
-
-Each point of instantiation has configuration options to adjust transport / logger behavior.
-
-These configurations can translate directly over to JavaScript.
-
-```typescript
-import { LogEventTransport, LogLevel, consoleOutlet, serializerOutlet } from '@obsidize/logger';
+import { LogEventTransport, LogLevel, consoleOutput, serializerOutput } from '@obsidize/logger';
+import { libraryTransport } from './path/to/my/custom/library';
 
 const isProdBuild = /* get flag from somewhere */ false;
 
@@ -87,18 +51,31 @@ const transport = new LogEventTransport({
   filter: (ev) => {
     return ev.level >= LogLevel.INFO && ev.tag !== 'test';
   },
-  outlets: [
-    !isProdBuild && consoleOutlet({
+  inputs: [
+	// Intercept events from a LogEventTransport instance defined elsewhere
+	libraryTransport,
+  ],
+  outputs: [
+	// Custom event output listener
+	(ev) => {
+		// Do something fancy with the event.
+		// These outputs are processed in the order they are defined, so
+		// if you want to mutate the event before it is used, do that here.
+	},
+	// removes console output from prod builds
+    !isProdBuild && consoleOutput({
+	  // customize how logs are serialized specifically for console output
       serializerConfig: {
         includeTimestamp: false,
         includeParams: false,
       }
     }),
-    serializerOutlet({
+	// Serialize events as line strings
+    serializerOutput({
       onNextLine: (str) => {
         /* write the line to storage or send it to a remote server */
       }
-    })
+    }),
   ]
 });
 
@@ -115,9 +92,14 @@ const logger = getLogger('SomeModuleName');
 
 logger.info('initialized!'); // prints "2025-06-13T02:52:45.416Z [INFO] [SomeModuleName] initialized!"
 
-logger.setCustomFilter((ev) => ev.level >= LogLevel.INFO);
-logger.debug('initialized!'); // does nothing because the custom filter suppresses debug logs
+logger.setCustomFilter((ev) => ev.level >= LogLevel.WARN);
+logger.info('test!'); // does nothing because the custom filter suppresses debug logs
 
 logger.disable(); // disable all events produced by this logger
-logger.debug('initialized!'); // does nothing because the logger is disabled
+logger.error('error!'); // does nothing because the logger is disabled
 ```
+
+For more info / examples:
+
+- [API docs](https://jospete.github.io/obsidize-logger/)
+- [Unit Tests](https://github.com/jospete/obsidize-logger/tree/main/src)

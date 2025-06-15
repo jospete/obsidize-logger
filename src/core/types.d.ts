@@ -60,12 +60,6 @@ export interface LogEventProducer {
 export type LogEventConsumer = (ev: LogEventLike) => void;
 
 /**
- * Alias of `LogEventConsumer`
- * @deprecated
- */
-export type LogEventOutlet = LogEventConsumer;
-
-/**
  * Utiliy wrapper for configuration flexibility
  */
 export type Maybe<T> = T | null | undefined | false;

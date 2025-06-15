@@ -1,19 +1,7 @@
+import { getMockConsole } from '../core/console.mock';
 import { LogEvent } from '../core/log-event';
 import { LogLevel } from '../core/log-level';
-import type { ConsoleLike } from '../core/types';
 import { consoleOutput } from './console-output';
-
-function getMockConsole() {
-	const mockConsole: ConsoleLike = {
-		trace: jest.fn(),
-		debug: jest.fn(),
-		log: jest.fn(),
-		info: jest.fn(),
-		warn: jest.fn(),
-		error: jest.fn(),
-	};
-	return mockConsole;
-}
 
 describe('consoleOutput', () => {
 	it('should create a handler that logs to a console-like target', () => {
