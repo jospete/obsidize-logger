@@ -20,7 +20,8 @@ import { log } from '@obsidize/logger';
 
 const logger = log('Main');
 
-logger.debug('test!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!" to the console
+// prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!"
+logger.debug('test!');
 ```
 
 Explicit configuration equivalent of the starter:
@@ -34,7 +35,8 @@ const transport = new LogEventTransport({
 
 const logger = transport.getLogger('Main');
 
-logger.debug('test!'); // prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!" to the console
+// prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!"
+logger.debug('test!');
 ```
 
 Advanced configuration example:
@@ -73,7 +75,7 @@ const transport = new LogEventTransport({
 	// Serialize events as line strings
     serializerOutput({
       onNextLine: (str) => {
-        /* write the line to storage or send it to a remote server */
+        /* write the line to storage like a file stream, or send it to a remote server */
       }
     }),
   ]
@@ -90,13 +92,18 @@ import { getLogger } from './path/to/logger';
 
 const logger = getLogger('SomeModuleName');
 
-logger.info('initialized!'); // prints "2025-06-13T02:52:45.416Z [INFO] [SomeModuleName] initialized!"
+// prints "2025-06-13T02:52:45.416Z [INFO] [SomeModuleName] initialized!"
+logger.info('initialized!');
 
 logger.setCustomFilter((ev) => ev.level >= LogLevel.WARN);
-logger.info('test!'); // does nothing because the custom filter suppresses debug logs
 
-logger.disable(); // disable all events produced by this logger
-logger.error('error!'); // does nothing because the logger is disabled
+// does nothing because the custom filter suppresses info logs (INFO < WARN)
+logger.info('test!');
+
+logger.disable();
+
+// does nothing because the logger is disabled
+logger.error('error!');
 ```
 
 For more info / examples:
