@@ -1,7 +1,7 @@
 import { LogEventSerializer, LogEventSerializerDelegateConfig } from '../core/log-event-serializer';
-import { LogEventOutlet } from '../core/log-event-transport';
+import { LogEventConsumer } from '../core/types';
 
-export interface SerializerOutletConfig extends LogEventSerializerDelegateConfig {
+export interface SerializerOutputConfig extends LogEventSerializerDelegateConfig {
 	/**
 	 * A seperator string to append to serialized events
 	 * @default '\n'
@@ -19,7 +19,7 @@ export interface SerializerOutletConfig extends LogEventSerializerDelegateConfig
  * @param config - options for serialization and message passing
  * @returns an outlet function that can be invoked by a transport
  */
-export function serializerOutlet(config: SerializerOutletConfig): LogEventOutlet {
+export function serializerOutput(config: SerializerOutputConfig): LogEventConsumer {
 	const seperator = typeof config.seperator === 'string' ? config.seperator : '\n';
 	const serialize = LogEventSerializer.parseDelegateFrom(config);
 	const callback = config.onNextLine;
@@ -27,3 +27,9 @@ export function serializerOutlet(config: SerializerOutletConfig): LogEventOutlet
 		callback(serialize(ev) + seperator);
 	};
 }
+
+/**
+ * Alias of `serializerOutput`
+ * @deprecated
+ */
+export const serializerOutlet = serializerOutput;

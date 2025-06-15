@@ -1,4 +1,4 @@
-import { ConsoleLike, LogEventTransport, consoleOutlet } from './index';
+import { ConsoleLike, LogEventTransport, consoleOutput } from './index';
 
 function getMockConsole() {
 	const mockConsole: ConsoleLike = {
@@ -17,7 +17,7 @@ describe('@obsidize/logger', () => {
 		const mockConsole = getMockConsole();
 		const transport = new LogEventTransport({
 			outlets: [
-				consoleOutlet({
+				consoleOutput({
 					target: mockConsole,
 					serializerConfig: {
 						includeTimestamp: false,

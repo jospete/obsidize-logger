@@ -1,6 +1,6 @@
 import { LogEventTransport } from './core/log-event-transport';
 import { Logger } from './core/logger';
-import { consoleOutlet } from './outputs/console-output';
+import { consoleOutput } from './outputs/console-output';
 
 let defaultTransport: LogEventTransport | undefined;
 
@@ -13,7 +13,7 @@ let defaultTransport: LogEventTransport | undefined;
 export function getDefaultTransport(): LogEventTransport {
 	return defaultTransport || (defaultTransport = new LogEventTransport({
 		outputs: [
-			consoleOutlet()
+			consoleOutput()
 		]
 	}));
 }

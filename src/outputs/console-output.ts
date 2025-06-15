@@ -1,7 +1,6 @@
 import { LogEventSerializer, LogEventSerializerDelegateConfig } from '../core/log-event-serializer';
-import { LogEventOutlet } from '../core/log-event-transport';
 import { LogLevel } from '../core/log-level';
-import type { ConsoleLike } from '../core/types';
+import type { ConsoleLike, LogEventConsumer } from '../core/types';
 
 function invokeConsole(target: ConsoleLike, level: number, message: string, params: any[]): void {
 	if (level >= LogLevel.ERROR) {
@@ -21,9 +20,9 @@ function invokeConsole(target: ConsoleLike, level: number, message: string, para
  * Delegate to invoke some method a console-like target.
  * Acts as a proxy for the global `window.console` object (or any other provided target).
  */
-export type ConsoleOutletInvoker = (target: ConsoleLike, level: number, message: string, params: any[]) => void;
+export type ConsoleOutputInvoker = (target: ConsoleLike, level: number, message: string, params: any[]) => void;
 
-export interface ConsoleOutletConfig extends LogEventSerializerDelegateConfig {
+export interface ConsoleOutputConfig extends LogEventSerializerDelegateConfig {
 	/**
 	 * The target to send serialized log events to
 	 * @default cosnole
@@ -35,7 +34,7 @@ export interface ConsoleOutletConfig extends LogEventSerializerDelegateConfig {
 	 * The default handler will narrow levels down to `LOG`, `WARN` and `ERROR`
 	 * to maximize compatibility with different runtime environments.
 	 */
-	invoke?: ConsoleOutletInvoker;
+	invoke?: ConsoleOutputInvoker;
 }
 
 /**
@@ -43,7 +42,7 @@ export interface ConsoleOutletConfig extends LogEventSerializerDelegateConfig {
  * @param config - optional customization config
  * @returns an outlet function that can be invoked by a transport
  */
-export function consoleOutlet(config: ConsoleOutletConfig = {}): LogEventOutlet {
+export function consoleOutput(config: ConsoleOutputConfig = {}): LogEventConsumer {
 	const target = config.target || console;
 	const invoke = config.invoke || invokeConsole;
 	const serialize = LogEventSerializer.parseDelegateFrom(config);
@@ -54,3 +53,9 @@ export function consoleOutlet(config: ConsoleOutletConfig = {}): LogEventOutlet 
 		invoke(target, level, message, p);
 	};
 }
+
+/**
+ * Alias of `consoleOutput`
+ * @deprecated
+ */
+export const consoleOutlet = consoleOutput;
