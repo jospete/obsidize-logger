@@ -7,5 +7,5 @@ import type { LogEventInterceptor } from '../core/types';
  * @returns an outlet function that can be invoked by a transport
  */
 export function interceptorOutlet(interceptor: LogEventInterceptor): LogEventOutlet {
-	return (ev) => interceptor.interceptEvent(ev);
+	return interceptor.forwardRef;
 }

@@ -5,7 +5,7 @@ Yet another javascript logging library, created to minimize friction with other 
 ## Features
 
 - Zero dependencies
-- Tiny
+- Tiny (relative to some of the other popular logging frameworks)
 - Runtime-configurable
 - Composable
 - Built-in filtering

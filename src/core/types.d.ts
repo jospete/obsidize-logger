@@ -28,6 +28,44 @@ export interface LogEventLike {
  * Communication interface between `Logger` -> `LogEventTransport`
  */
 export interface LogEventInterceptor {
+	/**
+	 * Alternate of `interceptEvent` that can be passed by value
+	 * without losing the `this` context of the interceptor.
+	 */
+	forwardRef(ev: LogEventLike): void;
+	/**
+	 * Notifies this instance of a new event to consume.
+	 */
 	interceptEvent(ev: LogEventLike): void;
+	/**
+	 * Requests a new event instance from this interceptor.
+	 * 
+	 * For the sake of consistency between loggers, it should be
+	 * left up to the interceptor to generate event instances.
+	 */
 	createEvent(level: number, tag: string, message: string, params?: any[], timestamp?: number): LogEventLike;
 }
+
+/**
+ * Communication interface that allows for more advanced event routing.
+ */
+export interface LogEventProducer {
+	addInterceptor(interceptor: LogEventInterceptor): void;
+	removeInterceptor(interceptor: LogEventInterceptor): void;
+}
+
+/**
+ * Callback that consumes events produced by loggers.
+ */
+export type LogEventConsumer = (ev: LogEventLike) => void;
+
+/**
+ * Alias of `LogEventConsumer`
+ * @deprecated
+ */
+export type LogEventOutlet = LogEventConsumer;
+
+/**
+ * Utiliy wrapper for configuration flexibility
+ */
+export type Maybe<T> = T | null | undefined | false;
