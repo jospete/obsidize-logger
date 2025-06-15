@@ -13,7 +13,13 @@ let defaultTransport: LogEventTransport | undefined;
 export function getDefaultTransport(): LogEventTransport {
 	return defaultTransport || (defaultTransport = new LogEventTransport({
 		outputs: [
-			consoleOutput()
+			consoleOutput({
+				serializerConfig: {
+					includeTimestamp: false,
+					includeLevel: false,
+					includeParams: false,
+				}
+			})
 		]
 	}));
 }

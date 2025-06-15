@@ -28,8 +28,10 @@ describe('@obsidize/logger', () => {
 					target: mockConsole,
 					// customize how logs are serialized specifically for console output
 					serializerConfig: {
-						includeTimestamp: false,
-						includeParams: false,
+						includeTimestamp: true,
+						includeLevel: true,
+						includeTag: true,
+						includeParams: true,
 					},
 				}),
 				// Serialize events as line strings

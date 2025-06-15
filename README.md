@@ -20,22 +20,30 @@ import { log } from '@obsidize/logger';
 
 const logger = log('Main');
 
-// prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!"
+// prints "[Main] test!"
 logger.debug('test!');
 ```
 
-Explicit configuration equivalent of the starter:
+Explicit configuration (equivalent of the starter example):
 
 ```typescript
 import { LogEventTransport, consoleOutput } from '@obsidize/logger';
 
 const transport = new LogEventTransport({
-	outputs: [consoleOutput()]
+	outputs: [
+		consoleOutput({
+			serializerConfig: {
+				includeTimestamp: false,
+				includeLevel: false,
+				includeParams: false,
+			}
+		})
+	]
 });
 
 const logger = transport.getLogger('Main');
 
-// prints "2025-06-13T02:52:45.416Z [DEBUG] [Main] test!"
+// prints "[Main] test!"
 logger.debug('test!');
 ```
 
@@ -46,7 +54,7 @@ Advanced configuration example:
 import { LogEventTransport, LogLevel, consoleOutput, serializerOutput } from '@obsidize/logger';
 import { libraryTransport } from './path/to/my/custom/library';
 
-const isProdBuild = /* get flag from somewhere */ false;
+const isProdBuild = /* load flag from somewhere */ false;
 
 const transport = new LogEventTransport({
   // ignore debug and trace logs, and ignore logs with the tag "test"
@@ -68,8 +76,10 @@ const transport = new LogEventTransport({
     !isProdBuild && consoleOutput({
 	  // customize how logs are serialized specifically for console output
       serializerConfig: {
-        includeTimestamp: false,
-        includeParams: false,
+        includeTimestamp: true, // default
+		includeLevel: true, // default
+		includeTag: true, // default
+        includeParams: true, // default
       }
     }),
 	// Serialize events as line strings
@@ -88,7 +98,7 @@ export function getLogger(tag: string) {
 // ... in some other file ...
 
 import { LogLevel } from '@obsidize/logger';
-import { getLogger } from './path/to/logger';
+import { getLogger } from './path/to/logger.ts';
 
 const logger = getLogger('SomeModuleName');
 
