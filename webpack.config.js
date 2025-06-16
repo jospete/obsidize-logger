@@ -33,8 +33,8 @@ module.exports = [
 	{
 		...baseConfig,
 		output: {
-			filename: 'index.cjs',
-			path: path.resolve(__dirname, 'dist'),
+			filename: 'obsidize-logger.cjs',
+			path: path.resolve(__dirname, 'packed'),
 			library: {
 				type: 'commonjs2',
 			},
