@@ -1,8 +1,16 @@
 import { EventEmitter } from './event-emitter';
 import { LogEvent } from './log-event';
-import { LogEventFilterPredicate, LogEventGuard } from './log-event-guard';
+import { LogEventGuard } from './log-event-guard';
 import { Logger } from './logger';
-import type { LogEventConsumer, LogEventInterceptor, LogEventLike, LogEventProducer, Maybe } from './types';
+import type {
+	LogEventConsumer,
+	LogEventEmitterSource,
+	LogEventFilterPredicate,
+	LogEventInterceptor,
+	LogEventLike,
+	LogEventProducer,
+	Maybe
+} from './types';
 
 export interface LogEventTransportConfig {
 	/**
@@ -29,7 +37,8 @@ export interface LogEventTransportConfig {
  * deemed valid, it will be passed on to all assigned consumers, as well as
  * any listeners registered to the transport's event emitter.
  */
-export class LogEventTransport extends LogEventGuard implements LogEventProducer, LogEventInterceptor {
+export class LogEventTransport extends LogEventGuard
+	implements LogEventInterceptor, LogEventEmitterSource {
 	public readonly events = new EventEmitter<LogEventLike>();
 	public readonly forwardRef = this.interceptEvent.bind(this);
 
@@ -48,14 +57,6 @@ export class LogEventTransport extends LogEventGuard implements LogEventProducer
 
 	public createEvent(level: number, tag: string, message: string, params?: any[], timestamp?: number): LogEventLike {
 		return new LogEvent(level, tag, message, params, timestamp);
-	}
-
-	public addInterceptor(interceptor: LogEventInterceptor): void {
-		this.events.addListener(interceptor.forwardRef);
-	}
-
-	public removeInterceptor(interceptor: LogEventInterceptor): void {
-		this.events.removeListener(interceptor.forwardRef);
 	}
 
 	public configure(config: Partial<LogEventTransportConfig>): void {
@@ -77,10 +78,11 @@ export class LogEventTransport extends LogEventGuard implements LogEventProducer
 
 		if (Array.isArray(inputs)) {
 			for (const input of inputs) {
-				if (typeof input === 'object' &&
-					input !== null &&
-					typeof input.addInterceptor === 'function') {
-					input.addInterceptor(this);
+				if (typeof input === 'function') {
+					input(this.forwardRef);
+				} else if (typeof input === 'object' &&
+					typeof input?.events?.addListener === 'function') {
+					input.events.addListener(this.forwardRef);
 				}
 			}
 		}

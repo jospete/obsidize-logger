@@ -25,6 +25,21 @@ export interface LogEventLike {
 }
 
 /**
+ * Function that handles incoming log events
+ */
+export type LogEventDelegate = (ev: LogEventLike) => void;
+
+/**
+ * Function type that should return true when an event is considered "valid"
+ */
+export type LogEventFilterPredicate = (ev: LogEventLike) => boolean;
+
+/**
+ * Function that handles registration or deregistration of a log event listener function.
+ */
+export type LogEventListenerDelegate = (listener: LogEventDelegate) => void;
+
+/**
  * Communication interface between `Logger` -> `LogEventTransport`
  */
 export interface LogEventInterceptor {
@@ -32,7 +47,7 @@ export interface LogEventInterceptor {
 	 * Alternate of `interceptEvent` that can be passed by value
 	 * without losing the `this` context of the interceptor.
 	 */
-	forwardRef(ev: LogEventLike): void;
+	readonly forwardRef: LogEventDelegate;
 	/**
 	 * Notifies this instance of a new event to consume.
 	 */
@@ -47,17 +62,29 @@ export interface LogEventInterceptor {
 }
 
 /**
- * Communication interface that allows for more advanced event routing.
+ * Simplified interface for transport implementation.
  */
-export interface LogEventProducer {
-	addInterceptor(interceptor: LogEventInterceptor): void;
-	removeInterceptor(interceptor: LogEventInterceptor): void;
+export interface LogEventEmitterLike {
+	addListener(listener: LogEventDelegate): void;
+	removeListener(listener: LogEventDelegate): void;
+}
+
+/**
+ * Generic wrapper for any object instance that contains an event emitter for log events
+ */
+export interface LogEventEmitterSource {
+	readonly events: LogEventEmitterLike;
 }
 
 /**
  * Callback that consumes events produced by loggers.
  */
-export type LogEventConsumer = (ev: LogEventLike) => void;
+export type LogEventConsumer = LogEventDelegate;
+
+/**
+ * Communication interface that allows for more advanced event routing.
+ */
+export type LogEventProducer = LogEventEmitterSource | LogEventListenerDelegate;
 
 /**
  * Utiliy wrapper for configuration flexibility

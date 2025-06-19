@@ -24,9 +24,15 @@ describe('LogEventTransport', () => {
 		it('accepts an array of inputs which are event producers', () => {
 			const t1 = new LogEventTransport();
 			const t2 = new LogEventTransport();
-			const t3 = new LogEventTransport({ inputs: [t1, null, t2, {} as any] });
+			const t3 = new LogEventTransport({ inputs: [t1, null, t2, {} as any, { events: [] } as any] });
 			expect(t1.events.hasListener(t3.forwardRef)).toBe(true);
 			expect(t2.events.hasListener(t3.forwardRef)).toBe(true);
+		});
+
+		it('can accept function inputs for custom listener registration', () => {
+			const spy = jest.fn();
+			const t1 = new LogEventTransport({ inputs: [spy] });
+			expect(spy).toHaveBeenCalledWith(t1.forwardRef);
 		});
 	});
 
@@ -48,16 +54,6 @@ describe('LogEventTransport', () => {
 			});
 			t.interceptEvent(new LogEvent(LogLevel.DEBUG, 'test', 'message'));
 			expect(outputSpy).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('removeInterceptor', () => {
-		it('removes the given interceptor from the target as a consumer', () => {
-			const t1 = new LogEventTransport();
-			const t2 = new LogEventTransport({ inputs: [t1] });
-			expect(t1.events.hasListener(t2.forwardRef)).toBe(true);
-			t1.removeInterceptor(t2);
-			expect(t1.events.hasListener(t2.forwardRef)).toBe(false);
 		});
 	});
 });

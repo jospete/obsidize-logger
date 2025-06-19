@@ -1,9 +1,4 @@
-import type { LogEventLike } from './types';
-
-/**
- * Function type that should return true when an event is considered "valid"
- */
-export type LogEventFilterPredicate = (ev: LogEventLike) => boolean;
+import type { LogEventFilterPredicate } from './types';
 
 /**
  * Base class for other constructs that need to filter log events.
