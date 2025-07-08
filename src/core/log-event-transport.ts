@@ -40,7 +40,7 @@ export interface LogEventTransportConfig {
 export class LogEventTransport extends LogEventGuard
 	implements LogEventInterceptor, LogEventEmitterSource {
 	public readonly events = new EventEmitter<LogEventLike>();
-	public readonly forwardRef = this.interceptEvent.bind(this);
+	public readonly forwardRef = (e: LogEventLike) => this.interceptEvent(e);
 
 	constructor(options: Partial<LogEventTransportConfig> = {}) {
 		super();

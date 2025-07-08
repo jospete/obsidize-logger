@@ -1,6 +1,7 @@
 import { LogEvent } from './log-event';
 import { LogEventTransport } from './log-event-transport';
 import { LogLevel } from './log-level';
+import { LogEventLike } from './types';
 
 describe('LogEventTransport', () => {
 	it('should be created', () => {
@@ -54,6 +55,24 @@ describe('LogEventTransport', () => {
 			});
 			t.interceptEvent(new LogEvent(LogLevel.DEBUG, 'test', 'message'));
 			expect(outputSpy).not.toHaveBeenCalled();
+		});
+		it('can be overridden in subclasses', () => {
+			class CustomTransport extends LogEventTransport {
+				customIntercept = false;
+				public interceptEvent(ev: LogEventLike): void {
+					super.interceptEvent(ev);
+					this.customIntercept = true;
+				}
+			}
+			const outputSpy = jest.fn();
+			const t = new CustomTransport({
+				filter: (ev) => ev.level >= LogLevel.INFO,
+				outputs: [outputSpy],
+			});
+			expect(t.customIntercept).toBe(false);
+			t.interceptEvent(new LogEvent(LogLevel.INFO, 'test', 'message'));
+			expect(outputSpy).toHaveBeenCalledTimes(1);
+			expect(t.customIntercept).toBe(true);
 		});
 	});
 });
