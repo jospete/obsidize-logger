@@ -9,6 +9,6 @@ export class LogEvent implements LogEventLike {
 		public tag: string,
 		public message: string,
 		public params: any[] | undefined = undefined,
-		public timestamp: number = Date.now()
+		public timestamp: number = Date.now(),
 	) {}
 }

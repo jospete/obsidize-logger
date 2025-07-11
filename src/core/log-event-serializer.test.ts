@@ -119,7 +119,7 @@ describe('LogEventSerializer', () => {
 				'test',
 				'message',
 				[{ thisIsMoreThanTwentyCharacters: true }],
-				fixedDateTimestamp
+				fixedDateTimestamp,
 			);
 			const v = s.serialize(l);
 			expect(v).toBe(`${fixedDateISO} [DEBUG] [test] message :: {\"thisIsMoreThanT...`);

@@ -9,7 +9,7 @@ import type {
 	LogEventInterceptor,
 	LogEventLike,
 	LogEventProducer,
-	Maybe
+	Maybe,
 } from './types';
 
 export interface LogEventTransportConfig {
@@ -37,8 +37,7 @@ export interface LogEventTransportConfig {
  * deemed valid, it will be passed on to all assigned consumers, as well as
  * any listeners registered to the transport's event emitter.
  */
-export class LogEventTransport extends LogEventGuard
-	implements LogEventInterceptor, LogEventEmitterSource {
+export class LogEventTransport extends LogEventGuard implements LogEventInterceptor, LogEventEmitterSource {
 	public readonly events = new EventEmitter<LogEventLike>();
 	public readonly forwardRef = (e: LogEventLike) => this.interceptEvent(e);
 
@@ -80,8 +79,7 @@ export class LogEventTransport extends LogEventGuard
 			for (const input of inputs) {
 				if (typeof input === 'function') {
 					input(this.forwardRef);
-				} else if (typeof input === 'object' &&
-					typeof input?.events?.addListener === 'function') {
+				} else if (typeof input === 'object' && typeof input?.events?.addListener === 'function') {
 					input.events.addListener(this.forwardRef);
 				}
 			}

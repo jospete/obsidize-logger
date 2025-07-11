@@ -11,7 +11,7 @@ describe('LogEventTransport', () => {
 	describe('configure', () => {
 		it('ignores non-function values for outputs', () => {
 			const t = new LogEventTransport();
-			t.configure({ outputs: [null, false, () => { }] });
+			t.configure({ outputs: [null, false, () => {}] });
 			expect(t.events.listenerCount).toBe(1);
 		});
 

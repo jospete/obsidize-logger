@@ -24,23 +24,24 @@ describe('@obsidize/logger', () => {
 					// if you want to mutate the event before it is used, do that here.
 				},
 				// removes console output from prod builds
-				!isProdBuild && consoleOutput({
-					target: mockConsole,
-					// customize how logs are serialized specifically for console output
-					serializerConfig: {
-						includeTimestamp: true,
-						includeLevel: true,
-						includeTag: true,
-						includeParams: true,
-					},
-				}),
+				!isProdBuild &&
+					consoleOutput({
+						target: mockConsole,
+						// customize how logs are serialized specifically for console output
+						serializerConfig: {
+							includeTimestamp: true,
+							includeLevel: true,
+							includeTag: true,
+							includeParams: true,
+						},
+					}),
 				// Serialize events as line strings
 				serializerOutput({
 					onNextLine: (str) => {
 						/* write the line to storage or send it to a remote server */
-					}
+					},
 				}),
-			]
+			],
 		});
 
 		function getLogger(name: string) {

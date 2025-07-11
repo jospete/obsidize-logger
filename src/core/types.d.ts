@@ -54,7 +54,7 @@ export interface LogEventInterceptor {
 	interceptEvent(ev: LogEventLike): void;
 	/**
 	 * Requests a new event instance from this interceptor.
-	 * 
+	 *
 	 * For the sake of consistency between loggers, it should be
 	 * left up to the interceptor to generate event instances.
 	 */

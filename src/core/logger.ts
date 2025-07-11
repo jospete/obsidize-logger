@@ -12,7 +12,10 @@ import type { ConsoleLike, LogEventInterceptor } from './types';
  * processing / outlet handling.
  */
 export class Logger extends LogEventGuard implements ConsoleLike {
-	constructor(public tag: string, public interceptor: LogEventInterceptor) {
+	constructor(
+		public tag: string,
+		public interceptor: LogEventInterceptor,
+	) {
 		super();
 	}
 
